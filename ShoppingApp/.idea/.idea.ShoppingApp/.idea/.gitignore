@@ -3,8 +3,8 @@
 /workspace.xml
 # Rider ignored files
 /modules.xml
-/.idea.Project.iml
 /contentModel.xml
+/.idea.ShoppingApp.iml
 /projectSettingsUpdater.xml
 # Ignored default folder with query files
 /queries/
