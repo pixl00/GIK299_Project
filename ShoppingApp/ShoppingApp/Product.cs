@@ -1,6 +1,6 @@
 ﻿namespace ShoppingApp;
 
-enum ProductCategory
+public enum ProductCategory
 {
     NONE,
     OFFICE,
@@ -9,12 +9,22 @@ enum ProductCategory
 
 public class Product
 {
-    uint id;
-    string name;
-    float price;
-    List<ProductCategory> categories;
+    public Product(uint id, string name, float price, uint quantity, ProductCategory category)
+    {
+        Id = (int)id;
+        Name = name;
+        Price = price;
+        Quantity = (int)quantity;
+        Categories.Add(category);
+    }
+
+    public int Id;
+    public string Name;
+    public float Price;
+    public int Quantity;
+    public List<ProductCategory> Categories = new();
     
-    bool hasReducedPrice = false;
-    float reducedPercent;
-    float reducedPrice;
+    public bool HasReducedPrice = false;
+    public float ReducedPercent;
+    public float ReducedPrice;
 }
