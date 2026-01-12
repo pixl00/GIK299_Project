@@ -1,25 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 
-
-
 public class LoginSystem
 {
-	private List<Users> userList = new List<Users>();
+	private UserRepository userRepository;
 
-	public LoginSystem()
+	public LoginSystem(UserRepository repo)
 	{
-		userList.Add(new Users("admin", "password", "Pentagon 5", true));
-		userList.Add(new Users("Doris", "spaghetti", "Tired Street 1", false));
-		userList.Add(new Users("Carlos", "dogwater", "Boring Avenue 22", false));
-		userList.Add(new Users("Benke", "sweden123", "Winter Boulevard 46", false));
+		userRepository = repo;
 	}
 
-
-	public Users Authenticate()
+	public User Authenticate()
 	{
 		Console.Clear();
-		Console.WriteLine("=== User Login ===");
+		Console.WriteLine("=== User Login ==="); 
 
 		while (true)
 		{
@@ -35,17 +29,16 @@ public class LoginSystem
 			Console.WriteLine("Enter your password:");
 			string inputPassword = Console.ReadLine();
 
-			foreach (Users user in userList)
+			foreach (User user in userRepository.GetAllUsers())
 			{
-				if (user.Namn == inputName && user.Password == inputPassword)
+				if (user.Username.ToLower() == inputName.ToLower() && user.Password == inputPassword)
 				{
-					Console.WriteLine($"Welcome back, {user.Namn}!");
+					Console.WriteLine($"Welcome back, {user.Username}!");
 					return user;
-                }
+				}
 			}
 			Console.WriteLine("Authentication failed. Invalid username or password.");
-            Console.WriteLine();
-			
-        }
+			Console.WriteLine();
+		}
 	}
 }
