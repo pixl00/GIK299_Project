@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+// Handles user authentication and profile management
 public class LoginSystem
 {
 	private UserRepository userRepository;
@@ -10,6 +11,7 @@ public class LoginSystem
 		userRepository = repo;
 	}
 
+	// Prompts user for credentials and returns authenticated user or null if login fails
 	public User Authenticate()
 	{
 		Console.Clear();
@@ -31,6 +33,7 @@ public class LoginSystem
 			string inputPassword = Console.ReadLine();
 			Console.WriteLine();
 
+			// Check credentials against all users (username is case-insensitive)
 			foreach (User user in userRepository.GetAllUsers())
 			{
 				if (user.Username.ToLower() == inputName.ToLower() && user.Password == inputPassword)
@@ -44,12 +47,13 @@ public class LoginSystem
 		}
 	}
 
+	// Allows users to update their account information (admins can update any user)
 	public void UpdateUserInfo(User currentUser)
 	{
 		Console.Clear();
         User userToUpdate;
 
-		// Determine which user to update
+		// Determine which user to update based on admin status
 		if (currentUser.IsAdmin())
 		{
 			Console.WriteLine("\n--- Update User Information ---");
@@ -62,7 +66,7 @@ public class LoginSystem
 				return;
 			}
 
-			// Case-insensitive user search
+			// Search for user with case-insensitive username matching
 			userToUpdate = null;
 			foreach (User user in userRepository.GetAllUsers())
 			{
@@ -81,18 +85,18 @@ public class LoginSystem
 		}
 		else
 		{
-            // Regular users gets their own username picked automatically
+            // Non-admin users can only update their own account
             userToUpdate = currentUser;
 		}
 
 		Console.WriteLine($"\nUpdating user: {userToUpdate.Username}");
 		Console.WriteLine("Leave blank to keep current value.");
 
-		// Store original values in case of revert
+		// Store original values for rollback if user cancels
 		string originalPassword = userToUpdate.Password;
 		string originalAddress = userToUpdate.DeliveryAddress;
 
-		// Update Password
+		// Prompt for new password
 		Console.WriteLine();
 		Console.Write($"New password (current: {userToUpdate.Password}): ");
 		string newPassword = Console.ReadLine();
@@ -101,7 +105,7 @@ public class LoginSystem
 			userToUpdate.Password = newPassword;
 		}
 
-        // Update Address
+        // Prompt for new delivery address
         Console.WriteLine();
 		Console.Write($"New address (current: {userToUpdate.DeliveryAddress}): ");
 		string newAddress = Console.ReadLine();
@@ -110,7 +114,7 @@ public class LoginSystem
 			userToUpdate.DeliveryAddress = newAddress;
 		}
 
-		// Confirmation window
+		// Show confirmation dialog with changes
 		Console.Clear();
         Console.WriteLine("\n--- Confirm Changes ---");
 		Console.WriteLine($"Username: {userToUpdate.Username}");
@@ -125,7 +129,7 @@ public class LoginSystem
 		}
 		else
 		{
-			// Revert changes
+			// Revert to original values if user cancels
 			userToUpdate.Password = originalPassword;
 			userToUpdate.DeliveryAddress = originalAddress;
 			Console.WriteLine("Changes cancelled.");
