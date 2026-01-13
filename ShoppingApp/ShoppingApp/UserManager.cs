@@ -18,6 +18,7 @@ public class UserManager
 		string username;
 		while (true)
 		{
+            Console.WriteLine();
 			Console.Write("Username: ");
 			username = Console.ReadLine();
 			
@@ -37,6 +38,7 @@ public class UserManager
 		string password;
 		while (true)
 		{
+            Console.WriteLine();
 			Console.Write("Password: ");
 			password = Console.ReadLine();
 			
@@ -50,6 +52,7 @@ public class UserManager
 		string address;
 		while (true)
 		{
+            Console.WriteLine();
 			Console.Write("Address: ");
 			address = Console.ReadLine();
 			
@@ -59,7 +62,7 @@ public class UserManager
 			}
 			Console.WriteLine("Address cannot be empty.");
 		}
-
+        Console.WriteLine();
 		Console.Write("Is Admin? (y/n): ");
 		bool isAdmin = Console.ReadLine().ToLower() == "y";
 
