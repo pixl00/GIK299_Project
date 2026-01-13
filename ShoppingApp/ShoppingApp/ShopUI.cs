@@ -1,6 +1,7 @@
 ﻿namespace ShoppingApp;
 
 public class ShopUI
+public static class ShopUI
 {
     private static User currentUser = null;
 
@@ -212,12 +213,12 @@ public class ShopUI
     
     // Displays a paginated list of all products with the ability to view individual product details
     public static void DisplayAllProducts(ProductInventory inventory)
+    public static void DisplayProducts(List<Product> products)
     {
         Console.Clear();
         Console.WriteLine("[0] Return to main menu");
         Console.WriteLine("--------------------------------------------------------");
         
-        var products = inventory.Products;
         for (int i = 0; i < products.Count; i++)
         {
             Console.Write($"[{i+1}] ");
@@ -241,6 +242,7 @@ public class ShopUI
         if (command == "1")
         {
             // TODO: Implement add to cart functionality
+            //todo Add to cart
         }
         else if (command == "2")
         {
@@ -258,11 +260,32 @@ public class ShopUI
   
         // Filter products matching search term in name or category
         for (int i = 0; i < inventory.Products.Count; i++)
+=======
+    public static void DisplaySearchProducts(List<Product> products)
+    {
+        string? search = null;
+        while (string.IsNullOrWhiteSpace(search))
+>>>>>>> Stashed changes
         {
-            if (!inventory.Products[i].Name.ToLower().Contains(search.ToLower()))
+            Console.Clear();
+            Console.Write("Search for products or categories: ");
+            search = Console.ReadLine();
+        }
+        
+        Console.WriteLine($"Search for products or categories: {search}");
+        Console.WriteLine("[0] Return to main menu");
+        Console.WriteLine("--------------------------------------------------------");
+        List<Product> searchedProducts = new();
+  
+        // Find all the products to display
+        for (int i = 0; i < products.Count; i++)
+        {
+            // Check if the name does not contain the search term
+            if (!products[i].Name.ToLower().Contains(search.ToLower()))
             {
+                // Check if the categories contain the search term
                 bool categoryContains = false;
-                foreach (var category in inventory.Products[i].Categories)
+                foreach (var category in products[i].Categories)
                 {
                     if (category.ToString().ToLower().Contains(search.ToLower()))
                     {
@@ -274,11 +297,18 @@ public class ShopUI
                     continue;
             }
             
+<<<<<<< Updated upstream
             products.Add(inventory.Products[i]);
         }
 
         // Display "no results" message if search yields no matches
         if (products.Count == 0)
+=======
+            searchedProducts.Add(products[i]);
+        }
+        
+        if (searchedProducts.Count == 0)
+>>>>>>> Stashed changes
         {
             Console.Clear();
             Console.WriteLine("No products found");
@@ -286,16 +316,23 @@ public class ShopUI
             return;
         }
         
+<<<<<<< Updated upstream
         // Display search results
         for (int i = 0; i < products.Count; i++)
+=======
+        DisplayProducts(searchedProducts);
+    }
+
+    public static void DisplayCart(User? user)
+    {
+        Console.Clear();
+        if (user == null)
+>>>>>>> Stashed changes
         {
-            Console.Write($"[{i+1}]");
-            DisplayProduct(products[i]);
-            Console.WriteLine("--------------------------------------------------------");
-        }
-        string? command = Console.ReadLine();
-        if (command == "0")
+            Console.Write("Login to see your cart");
+            Console.ReadLine();
             return;
+<<<<<<< Updated upstream
         
         int.TryParse(command, out int index);
         if (index < 1 || index > products.Count)
@@ -318,5 +355,24 @@ public class ShopUI
                 return;
             }
         }
+=======
+        }
+        
+        Console.WriteLine("[1] Return to main menu");
+        
+        Console.WriteLine($"{user.Username}'s cart");
+        ShopUI.DisplayProducts(user.Cart);
+
+        string? command = null;
+        while (string.IsNullOrWhiteSpace(command))
+        {
+            command = Console.ReadLine();
+            
+        }
+        if (command == "1")
+        {
+            return;
+        }
+>>>>>>> Stashed changes
     }
 }
