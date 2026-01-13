@@ -11,20 +11,20 @@ public enum ProductCategory
 // Represents a product in the inventory with pricing and discount functionality
 public class Product
 {
-    public Product(uint id, string name, float price, uint quantity, ProductCategory category)
+    public Product(uint id, string name, float price, uint quantity, List<ProductCategory> categories)
     {
         Id = (int)id;
         Name = name;
         Price = price;
         Quantity = (int)quantity;
-        Categories.Add(category);
+        Categories = categories;
     }
 
     public int Id;
     public string Name;
     public float Price;
     public int Quantity;
-    public List<ProductCategory> Categories = new();
+    public List<ProductCategory> Categories;
     
     // Sale pricing
     public bool HasReducedPrice = false;

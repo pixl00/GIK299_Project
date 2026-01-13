@@ -3,13 +3,13 @@
 public class ProductInventory
 {
     public List<Product> Products = new();
-    private uint CurrentProductId; // The id that the next added product is gonna get
+    private uint currentProductId; // The id that the next added product is gonna get
     
-    public Product CreateProduct( string name, float price, uint availableStock, ProductCategory category)
+    public Product CreateProduct( string name, float price, uint availableStock, List<ProductCategory> categories)
     {
-        Product product = new(CurrentProductId, name, price, availableStock, category);
+        Product product = new(currentProductId, name, price, availableStock, categories);
         Products.Add(product);
-        CurrentProductId++;
+        currentProductId++;
         return product;
     }
 
