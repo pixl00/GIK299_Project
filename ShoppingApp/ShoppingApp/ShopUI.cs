@@ -1,6 +1,5 @@
 ﻿namespace ShoppingApp;
 
-public class ShopUI
 public static class ShopUI
 {
     private static User currentUser = null;
@@ -57,10 +56,10 @@ public static class ShopUI
         switch (command)
         {
             case "1":
-                DisplayAllProducts(inventory);
+                DisplayProducts(inventory.Products);
                 break;
             case "2":
-                SearchProducts(inventory);
+                DisplaySearchProducts(inventory.Products);
                 break;
             case "3":
                 DisplayCart();
@@ -162,19 +161,6 @@ public static class ShopUI
         Console.ReadKey();
     }
 
-    // Prompts the user to enter a search term and displays matching products
-    private static void SearchProducts(ProductInventory inventory)
-    {
-        string? command = null;
-        while (command == null || command == "")
-        {
-            Console.Clear();
-            Console.Write("Enter a search term : ");
-            command = Console.ReadLine();
-            DisplaySearchedProducts(inventory, command);
-        }
-    }
-
     private static void DisplayCart()
     {
         Console.Clear();
@@ -212,7 +198,6 @@ public static class ShopUI
     }
     
     // Displays a paginated list of all products with the ability to view individual product details
-    public static void DisplayAllProducts(ProductInventory inventory)
     public static void DisplayProducts(List<Product> products)
     {
         Console.Clear();
@@ -251,21 +236,10 @@ public static class ShopUI
     }
     
     // Searches products by name or category and displays matching results
-    public static void DisplaySearchedProducts(ProductInventory inventory, string search)
-    {
-        Console.Clear();
-        Console.WriteLine("Choose a product");
-        Console.WriteLine("--------------------------------------------------------");
-        List<Product> products = new();
-  
-        // Filter products matching search term in name or category
-        for (int i = 0; i < inventory.Products.Count; i++)
-=======
     public static void DisplaySearchProducts(List<Product> products)
     {
         string? search = null;
         while (string.IsNullOrWhiteSpace(search))
->>>>>>> Stashed changes
         {
             Console.Clear();
             Console.Write("Search for products or categories: ");
@@ -296,68 +270,31 @@ public static class ShopUI
                 if(!categoryContains)
                     continue;
             }
-            
-<<<<<<< Updated upstream
-            products.Add(inventory.Products[i]);
+            products.Add(products[i]);
         }
 
         // Display "no results" message if search yields no matches
         if (products.Count == 0)
-=======
-            searchedProducts.Add(products[i]);
-        }
-        
-        if (searchedProducts.Count == 0)
->>>>>>> Stashed changes
         {
             Console.Clear();
             Console.WriteLine("No products found");
             Console.ReadLine();
             return;
         }
-        
-<<<<<<< Updated upstream
+    
         // Display search results
-        for (int i = 0; i < products.Count; i++)
-=======
-        DisplayProducts(searchedProducts);
+            DisplayProducts(searchedProducts);
     }
 
     public static void DisplayCart(User? user)
     {
         Console.Clear();
         if (user == null)
->>>>>>> Stashed changes
         {
             Console.Write("Login to see your cart");
             Console.ReadLine();
             return;
-<<<<<<< Updated upstream
-        
-        int.TryParse(command, out int index);
-        if (index < 1 || index > products.Count)
-            return;
-
-        // Allow user to add selected product to cart
-        while (true)
-        {
-            Console.Clear();
-            DisplayProduct(products[index-1]);
-            Console.WriteLine("[1] Add to cart");
-            Console.WriteLine("[2] Return to main menu");
-            command = Console.ReadLine();
-            if (command == "1")
-            {
-                return;
-            }
-            if (command == "2")
-            {
-                return;
-            }
         }
-=======
-        }
-        
         Console.WriteLine("[1] Return to main menu");
         
         Console.WriteLine($"{user.Username}'s cart");
@@ -373,6 +310,5 @@ public static class ShopUI
         {
             return;
         }
->>>>>>> Stashed changes
     }
 }

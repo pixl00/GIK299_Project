@@ -8,8 +8,8 @@ class Program
     {
         // Initialize product inventory with sample products
         ProductInventory inventory = new ProductInventory();
-        inventory.CreateProduct("Gaming mouse", 59.99f, 10, ProductCategory.GAMING);
-        inventory.CreateProduct("Ergonomic mouse", 89.99f, 15, ProductCategory.OFFICE);
+        inventory.CreateProduct("Gaming mouse", 59.99f, 10, new(){ProductCategory.GAMING});
+        inventory.CreateProduct("Ergonomic mouse", 89.99f, 15, new(){ProductCategory.OFFICE});
         
         // Apply 50% discount to first product
         inventory.Products[0].SetReducedPrice(50f);
