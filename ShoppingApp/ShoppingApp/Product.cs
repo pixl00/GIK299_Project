@@ -1,5 +1,6 @@
 ﻿namespace ShoppingApp;
 
+// Product categories for organizing inventory
 public enum ProductCategory
 {
     NONE,
@@ -7,6 +8,7 @@ public enum ProductCategory
     GAMING
 }
 
+// Represents a product in the inventory with pricing and discount functionality
 public class Product
 {
     public Product(uint id, string name, float price, uint quantity, ProductCategory category)
@@ -24,16 +26,18 @@ public class Product
     public int Quantity;
     public List<ProductCategory> Categories = new();
     
+    // Sale pricing
     public bool HasReducedPrice = false;
     public float ReducedPercent;
     public float ReducedPrice;
 
-    // Returns the appropriate price (normal or reduced)
+    // Returns the appropriate price based on sale status
     public float GetPrice()
     {
         return HasReducedPrice ? ReducedPrice : Price;
     }
     
+    // Applies a discount percentage to the product and marks it as on sale
     public void SetReducedPrice(float percentage)
     {
         ReducedPercent = percentage;
