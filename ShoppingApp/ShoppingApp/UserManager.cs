@@ -14,8 +14,19 @@ public class UserManager
 		if (!adminUser.IsAdmin()) return;
 
 		Console.WriteLine("\n--- Create New User ---");
-		Console.Write("Username: ");
-		string username = Console.ReadLine();
+		
+		string username;
+		while (true)
+		{
+			Console.Write("Username: ");
+			username = Console.ReadLine();
+			
+			if (!string.IsNullOrEmpty(username))
+			{
+				break;
+			}
+			Console.WriteLine("Username cannot be empty.");
+		}
 
 		if (userRepository.GetUser(username) != null)
 		{
@@ -23,11 +34,31 @@ public class UserManager
 			return;
 		}
 
-		Console.Write("Password: ");
-		string password = Console.ReadLine();
+		string password;
+		while (true)
+		{
+			Console.Write("Password: ");
+			password = Console.ReadLine();
+			
+			if (!string.IsNullOrEmpty(password))
+			{
+				break;
+			}
+			Console.WriteLine("Password cannot be empty.");
+		}
 
-		Console.Write("Address: ");
-		string address = Console.ReadLine();
+		string address;
+		while (true)
+		{
+			Console.Write("Address: ");
+			address = Console.ReadLine();
+			
+			if (!string.IsNullOrEmpty(address))
+			{
+				break;
+			}
+			Console.WriteLine("Address cannot be empty.");
+		}
 
 		Console.Write("Is Admin? (y/n): ");
 		bool isAdmin = Console.ReadLine().ToLower() == "y";
