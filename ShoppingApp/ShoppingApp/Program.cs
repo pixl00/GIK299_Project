@@ -5,11 +5,11 @@ class Program
     public static bool Running = true;
     static void Main(string[] args)
     {
+        // Create the product inventory
         ProductInventory inventory = new ProductInventory();
-        inventory.CreateProduct("Gaming mouse", 59.99f, 10, ProductCategory.GAMING);
+        inventory.CreateProduct("Gaming mouse", 59.99f, 10, ProductCategory.GAMING).SetReducedPrice(50f);
         inventory.CreateProduct("Ergonomic mouse", 89.99f, 15, ProductCategory.OFFICE);
         
-        inventory.Products[0].SetReducedPrice(50f);
         
         // 1. Initialize User Repository and Managers
         UserRepository repository = new UserRepository();
