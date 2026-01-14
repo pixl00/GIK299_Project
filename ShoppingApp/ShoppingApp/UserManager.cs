@@ -19,7 +19,7 @@ public class UserManager
 		Console.WriteLine("\n--- Create New User ---");
 		
 		// Prompt for username with validation
-		string username;
+		string? username;
 		while (true)
 		{
             Console.WriteLine();
@@ -41,7 +41,7 @@ public class UserManager
 		}
 
 		// Prompt for password with validation
-		string password;
+		string? password;
 		while (true)
 		{
             Console.WriteLine();
@@ -56,7 +56,7 @@ public class UserManager
 		}
 
 		// Prompt for delivery address with validation
-		string address;
+		string? address;
 		while (true)
 		{
             Console.WriteLine();
@@ -73,7 +73,7 @@ public class UserManager
 		// Prompt for admin privileges
 		Console.WriteLine();
 		Console.Write("Is Admin? (y/n): ");
-		bool isAdmin = Console.ReadLine().ToLower() == "y";
+		bool isAdmin = Console.ReadLine()!.ToLower() == "y";
 
 		// Create and store the new user
 		User newUser = new User(username, password, address, isAdmin);
@@ -88,7 +88,7 @@ public class UserManager
 			return;
 
 		Console.Write("\nEnter username to delete: ");
-		string username = Console.ReadLine();
+		string username = Console.ReadLine()!;
 
 		// Prevent admin from deleting their own account
 		if (username.ToLower() == adminUser.Username.ToLower())

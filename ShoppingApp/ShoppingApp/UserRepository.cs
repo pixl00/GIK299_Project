@@ -43,7 +43,7 @@ public class UserRepository
 	// Removes a user by username (case-insensitive) and returns success status
 	public bool RemoveUser(string username)
 	{
-		User userToRemove = GetUser(username);
+		User? userToRemove = GetUser(username);
 		if (userToRemove != null)
 		{
 			users.Remove(userToRemove);

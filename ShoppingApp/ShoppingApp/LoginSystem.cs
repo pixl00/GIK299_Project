@@ -21,7 +21,7 @@ public class LoginSystem
 		while (true)
 		{
 			Console.Write("Enter your username (or leave blank to exit): ");
-			string inputName = Console.ReadLine();
+			string? inputName = Console.ReadLine();
             Console.WriteLine();
 
 			if (string.IsNullOrEmpty(inputName))
@@ -30,7 +30,7 @@ public class LoginSystem
 				return null;
 			}
 			Console.Write("Enter your password: ");
-			string inputPassword = Console.ReadLine();
+			string? inputPassword = Console.ReadLine();
 			Console.WriteLine();
 
 			// Check credentials against all users (username is case-insensitive)
@@ -54,14 +54,14 @@ public class LoginSystem
 			return;
 		
 		Console.Clear();
-        User userToUpdate;
+        User? userToUpdate;
 
 		// Determine which user to update based on admin status
 		if (currentUser.IsAdmin())
 		{
 			Console.WriteLine("\n--- Update User Information ---");
 			Console.Write("Enter username to update: ");
-			string username = Console.ReadLine();
+			string? username = Console.ReadLine();
 
 			if (string.IsNullOrEmpty(username))
 			{
@@ -102,7 +102,7 @@ public class LoginSystem
 		// Prompt for new password
 		Console.WriteLine();
 		Console.Write($"New password (current: {userToUpdate.Password}): ");
-		string newPassword = Console.ReadLine();
+		string? newPassword = Console.ReadLine();
 		if (!string.IsNullOrEmpty(newPassword))
 		{
 			userToUpdate.Password = newPassword;
@@ -111,7 +111,7 @@ public class LoginSystem
         // Prompt for new delivery address
         Console.WriteLine();
 		Console.Write($"New address (current: {userToUpdate.DeliveryAddress}): ");
-		string newAddress = Console.ReadLine();
+		string? newAddress = Console.ReadLine();
 		if (!string.IsNullOrEmpty(newAddress))
 		{
 			userToUpdate.DeliveryAddress = newAddress;
@@ -123,9 +123,14 @@ public class LoginSystem
 		Console.WriteLine($"Username: {userToUpdate.Username}");
 		Console.WriteLine($"Password: {originalPassword} -> {userToUpdate.Password}");
 		Console.WriteLine($"Address: {originalAddress} -> {userToUpdate.DeliveryAddress}");
-		Console.Write("\nApply changes? (y/n): ");
-		string confirmation = Console.ReadLine();
-
+		
+		string? confirmation = null;
+		while (string.IsNullOrWhiteSpace(confirmation))
+		{
+			Console.Write("\nApply changes? (y/n): ");
+			confirmation= Console.ReadLine();
+		}
+		
 		if (confirmation.ToLower() == "y")
 		{
 			Console.WriteLine($"User {userToUpdate.Username} updated successfully.");
