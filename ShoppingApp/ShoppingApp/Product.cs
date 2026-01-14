@@ -21,6 +21,16 @@ public class Product
         Quantity = (int)quantity;
         Categories.Add(category);
     }
+    
+    // Copy constructor
+    public Product(Product product)
+    {
+        Id = product.Id;
+        Name = product.Name;
+        Price = product.Price;
+        Quantity = product.Quantity;
+        Categories = product.Categories;
+    }
 
     public int Id;
     public string Name;
@@ -33,6 +43,7 @@ public class Product
     public bool HasReducedPrice = false;
     public float ReducedPercent;
     public float ReducedPrice;
+    
 
     // Returns the appropriate price based on sale status
     public float GetPrice()

@@ -16,7 +16,7 @@ public class UserRepository
 	}
 
 	// Retrieves a user by username (case-insensitive)
-	public User GetUser(string username)
+	public User? GetUser(string username)
 	{
 		foreach (User user in users)
 		{

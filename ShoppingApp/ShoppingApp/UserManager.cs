@@ -15,7 +15,7 @@ public class UserManager
 	{
 		if (adminUser == null || !adminUser.IsAdmin()) 
 			return;
-
+		Console.Clear();
 		Console.WriteLine("\n--- Create New User ---");
 		
 		// Prompt for username with validation

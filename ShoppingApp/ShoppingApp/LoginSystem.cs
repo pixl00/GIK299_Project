@@ -12,7 +12,7 @@ public class LoginSystem
 	}
 
 	// Prompts user for credentials and returns authenticated user or null if login fails
-	public User Authenticate()
+	public User? Authenticate()
 	{
 		Console.Clear();
 		Console.WriteLine("=== User Login ===");

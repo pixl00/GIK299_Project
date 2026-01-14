@@ -56,17 +56,17 @@ public class ShopUI
         switch (command)
         {
             case "1":
-                DisplayAllProducts(inventory);
+                DisplayAllProducts(inventory.Products);
                 break;
             case "2":
-                DisplaySearchProducts(inventory);
+                DisplaySearchProducts(inventory.Products);
                 break;
             case "3":
                 DisplayCart();
                 break;
             case "4":
                 // View account info for authenticated users
-                    ViewMyInfo();
+                ViewMyInfo();
                 break;
             case "5":
                 // Update authenticated user's own information
@@ -75,16 +75,14 @@ public class ShopUI
                 break;
             case "6":
                 // Admin: Update any user's information
-                if (currentUser.IsAdmin())
+                if (currentUser != null && currentUser.IsAdmin())
                 {
-                    // todo borde inte vara currentUser här \/
                     loginSystem.UpdateUserInfo(currentUser);
                     Console.ReadKey();
                 }
                 break;
             case "7":
                 // Admin: Create a new user account
-                    Console.Clear();
                     userManager.CreateUser(currentUser);
                     Console.ReadKey();
                 break;
@@ -156,7 +154,15 @@ public class ShopUI
     private static void DisplayCart()
     {
         Console.Clear();
-        Console.WriteLine("Cart functionality coming soon!");
+        if (currentUser == null)
+        {
+            Console.WriteLine("You have to log in to view your cart");
+            Console.ReadLine();
+            return;
+        }
+        
+        Console.WriteLine($"{currentUser.Username}'s cart");
+        DisplayCartProducts( currentUser.Cart );
         Console.ReadKey();
     }
 
@@ -190,13 +196,12 @@ public class ShopUI
     }
     
     // Displays a paginated list of all products with the ability to view individual product details
-    public static void DisplayAllProducts(ProductInventory inventory)
+    public static void DisplayAllProducts(List<Product> products)
     {
         Console.Clear();
         Console.WriteLine("[0] Return to main menu");
         Console.WriteLine("--------------------------------------------------------");
         
-        var products = inventory.Products;
         for (int i = 0; i < products.Count; i++)
         {
             Console.Write($"[{i+1}] ");
@@ -208,18 +213,44 @@ public class ShopUI
             return;
         
         int.TryParse(command, out int index);
-        if (index < 1 || index > products.Count)
+        if (index > products.Count)
             return;
 
         // Display selected product details
         Console.Clear();
-        DisplayProduct(products[index-1]);
+        Product product = products[index-1];
+        DisplayProduct(product);
         Console.WriteLine("[1] Add to cart");
         Console.WriteLine("[2] Return to main menu");
         command = Console.ReadLine();
         if (command == "1")
         {
             // TODO: Implement add to cart functionality
+            if (currentUser == null)
+            {
+                Console.WriteLine("You have to log in to add items to your cart");
+                Console.ReadKey();
+                return;
+            }
+
+            if (product.Quantity <= 0)
+            {
+                Console.WriteLine("This item is out of stock");
+                Console.ReadKey();
+                return;
+            }
+            
+            Product? cartProduct = currentUser.CartContains(product);
+            if (cartProduct != null)
+            {
+                cartProduct.Quantity++;
+            }
+            else
+            {
+                Product newProduct = new Product(product);
+                newProduct.Quantity = 1;
+                currentUser.Cart.Add(newProduct);
+            }
         }
         else if (command == "2")
         {
@@ -228,7 +259,7 @@ public class ShopUI
     }
     
     // Searches products by name or category and displays matching results
-    public static void DisplaySearchProducts(ProductInventory inventory)
+    public static void DisplaySearchProducts(List<Product> products)
     {
         Console.Clear();
         string? search = null;
@@ -242,15 +273,15 @@ public class ShopUI
         
         Console.WriteLine("Choose a product");
         Console.WriteLine("--------------------------------------------------------");
-        List<Product> products = new();
+        List<Product> searchedProducts = new();
   
         // Filter products matching search term in name or category
-        for (int i = 0; i < inventory.Products.Count; i++)
+        for (int i = 0; i < products.Count; i++)
         {
-            if (!inventory.Products[i].Name.ToLower().Contains(search.ToLower()))
+            if (!products[i].Name.ToLower().Contains(search.ToLower()))
             {
                 bool categoryContains = false;
-                foreach (var category in inventory.Products[i].Categories)
+                foreach (var category in products[i].Categories)
                 {
                     if (category.ToString().ToLower().Contains(search.ToLower()))
                     {
@@ -262,11 +293,11 @@ public class ShopUI
                     continue;
             }
             
-            products.Add(inventory.Products[i]);
+            searchedProducts.Add(products[i]);
         }
 
         // Display "no results" message if search yields no matches
-        if (products.Count == 0)
+        if (searchedProducts.Count == 0)
         {
             Console.Clear();
             Console.WriteLine("No products found");
@@ -275,10 +306,10 @@ public class ShopUI
         }
         
         // Display search results
-        for (int i = 0; i < products.Count; i++)
+        for (int i = 0; i < searchedProducts.Count; i++)
         {
             Console.Write($"[{i+1}]");
-            DisplayProduct(products[i]);
+            DisplayProduct(searchedProducts[i]);
             Console.WriteLine("--------------------------------------------------------");
         }
         string? command = Console.ReadLine();
@@ -286,14 +317,14 @@ public class ShopUI
             return;
         
         int.TryParse(command, out int index);
-        if (index < 1 || index > products.Count)
+        if (index < 1 || index > searchedProducts.Count)
             return;
 
         // Allow user to add selected product to cart
         while (true)
         {
             Console.Clear();
-            DisplayProduct(products[index-1]);
+            DisplayProduct(searchedProducts[index-1]);
             Console.WriteLine("[1] Add to cart");
             Console.WriteLine("[2] Return to main menu");
             command = Console.ReadLine();
@@ -305,6 +336,86 @@ public class ShopUI
             {
                 return;
             }
+        }
+    }
+
+    public static void DisplayCartProduct( Product product )
+    {
+        Console.WriteLine( product.Name );
+        if( product.HasReducedPrice )
+        {
+            Console.WriteLine();
+            Console.WriteLine( $"Original price: ${FormatPrice( product.Price )}" );
+            Console.WriteLine( $"Current price: ${FormatPrice( product.ReducedPrice )} ({product.ReducedPercent}% off!)" );
+        }
+        else
+        {
+            Console.WriteLine();
+            Console.WriteLine( $"Current price: ${FormatPrice( product.Price )}" );
+        }
+        Console.WriteLine();
+        Console.WriteLine( $"Quantity: {product.Quantity}" );
+    }
+
+    public static void DisplayCartProducts( List<Product> products )
+    {
+        Console.Clear();
+        Console.WriteLine( "[0] Return to main menu" );
+        Console.WriteLine( "--------------------------------------------------------" );
+
+        for( int i = 0; i < products.Count; i++ )
+        {
+            Console.Write( $"[{i + 1}] " );
+            DisplayCartProduct( products[i] );
+            Console.WriteLine( "--------------------------------------------------------" );
+        }
+        string? command = Console.ReadLine();
+        if( command == "0" )
+            return;
+
+        int.TryParse( command, out int index );
+        if( index > products.Count )
+            return;
+
+        // Display selected product details
+        Console.Clear();
+        Product product = products[index - 1];
+        DisplayCartProduct( product );
+        Console.WriteLine( "[1] Remove from cart" );
+        Console.WriteLine( "[2] Return to main menu" );
+        command = Console.ReadLine();
+        if( command == "1" )
+        {
+            if( product.Quantity == 1 )
+            {
+                products.Remove( product );
+                Console.WriteLine( "Item removed" );
+                Console.ReadKey();
+                return;
+            }
+            else
+            {
+                while( true )
+                {
+                    Console.Write( $"How many items do you want to remove (Max:{product.Quantity}): " );
+                    bool parsed = int.TryParse( Console.ReadLine(), out int remove );
+                    if( parsed )
+                    {
+                        product.Quantity -= remove;
+                        if( product.Quantity <= 0 )
+                        {
+                            products.Remove( product );
+                        }
+                        Console.WriteLine( "Items removed" );
+                        Console.ReadKey();
+                        return;
+                    }
+                }
+            }
+        }
+        else if( command == "2" )
+        {
+            return;
         }
     }
 }
