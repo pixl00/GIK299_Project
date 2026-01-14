@@ -10,6 +10,7 @@ public class UserRepository
 	public UserRepository()
 	{
 		users.Add(new User("admin", "password", "Pentagon 5", true));
+		users.Add(new User("1", "1", "1", false));
 		users.Add(new User("Doris", "spaghetti", "Tired Street 1", false));
 		users.Add(new User("Carlos", "dogwater", "Boring Avenue 22", false));
 		users.Add(new User("Benke", "sweden123", "Winter Boulevard 46", false));

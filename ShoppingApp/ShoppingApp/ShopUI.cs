@@ -220,9 +220,13 @@ public class ShopUI
         Console.Clear();
         Product product = products[index-1];
         DisplayProduct(product);
+        Console.WriteLine("[0] Return to main menu");
         Console.WriteLine("[1] Add to cart");
-        Console.WriteLine("[2] Return to main menu");
         command = Console.ReadLine();
+        if (command == "0")
+        {
+            return;
+        }
         if (command == "1")
         {
             // TODO: Implement add to cart functionality
@@ -239,22 +243,17 @@ public class ShopUI
                 Console.ReadKey();
                 return;
             }
+
+            int quantity;
+            while (true)
+            {
+                Console.WriteLine($"Enter quantity (Max: {product.Quantity}): ");
+                bool success = int.TryParse(Console.ReadLine(), out quantity);
+                if( success && quantity <= product.Quantity && quantity >= 1 )
+                    break;
+            }
             
-            Product? cartProduct = currentUser.CartContains(product);
-            if (cartProduct != null)
-            {
-                cartProduct.Quantity++;
-            }
-            else
-            {
-                Product newProduct = new Product(product);
-                newProduct.Quantity = 1;
-                currentUser.Cart.Add(newProduct);
-            }
-        }
-        else if (command == "2")
-        {
-            return;
+            currentUser.AddToCart(product, quantity);
         }
     }
     
@@ -319,21 +318,38 @@ public class ShopUI
         int.TryParse(command, out int index);
         if (index < 1 || index > searchedProducts.Count)
             return;
-
+        Product product = searchedProducts[index-1];
         // Allow user to add selected product to cart
         while (true)
         {
             Console.Clear();
-            DisplayProduct(searchedProducts[index-1]);
+            DisplayProduct(product);
+            Console.WriteLine("[0] Return to main menu");
             Console.WriteLine("[1] Add to cart");
-            Console.WriteLine("[2] Return to main menu");
             command = Console.ReadLine();
-            if (command == "1")
+            if (command == "0")
             {
                 return;
             }
-            if (command == "2")
+            if (command == "1")
             {
+                if (currentUser == null)
+                {
+                    Console.WriteLine("You have to log in to add items to your cart");
+                    Console.ReadKey();
+                    return;
+                }
+                
+                int quantity;
+                while (true)
+                {
+                    Console.WriteLine($"Enter quantity (Max: {product.Quantity}): ");
+                    bool success = int.TryParse(Console.ReadLine(), out quantity);
+                    if( success && quantity <= product.Quantity && quantity >= 1 )
+                        break;
+                }
+            
+                currentUser.AddToCart(product, quantity);
                 return;
             }
         }
@@ -355,18 +371,23 @@ public class ShopUI
         }
         Console.WriteLine();
         Console.WriteLine( $"Quantity: {product.Quantity}" );
+        
+        if (product.LinkedItem != null)
+        {
+            Console.WriteLine($"Related product: {product.LinkedItem.Name}");
+        }
     }
 
-    public static void DisplayCartProducts( List<Product> products )
+    public static void DisplayCartProducts( List<Product> cart )
     {
         Console.Clear();
         Console.WriteLine( "[0] Return to main menu" );
         Console.WriteLine( "--------------------------------------------------------" );
 
-        for( int i = 0; i < products.Count; i++ )
+        for( int i = 0; i < cart.Count; i++ )
         {
             Console.Write( $"[{i + 1}] " );
-            DisplayCartProduct( products[i] );
+            DisplayCartProduct( cart[i] );
             Console.WriteLine( "--------------------------------------------------------" );
         }
         string? command = Console.ReadLine();
@@ -374,47 +395,61 @@ public class ShopUI
             return;
 
         int.TryParse( command, out int index );
-        if( index > products.Count )
+        if( index > cart.Count )
             return;
 
         // Display selected product details
         Console.Clear();
-        Product product = products[index - 1];
+        Product product = cart[index - 1];
         DisplayCartProduct( product );
+        Console.WriteLine( "[0] Return to main menu" );
         Console.WriteLine( "[1] Remove from cart" );
-        Console.WriteLine( "[2] Return to main menu" );
+        if(product.LinkedItem != null)
+            Console.WriteLine( "[2] Add recommended product to cart" );
         command = Console.ReadLine();
+        if( command == "" )
+        {
+            return;
+        }
         if( command == "1" )
         {
             if( product.Quantity == 1 )
             {
-                products.Remove( product );
+                cart.Remove( product );
                 Console.WriteLine( "Item removed" );
                 Console.ReadKey();
                 return;
             }
-            else
+            
+            while( true )
             {
-                while( true )
+                Console.Write( $"How many items do you want to remove (Max:{product.Quantity}): " );
+                bool parsed = int.TryParse( Console.ReadLine(), out int remove );
+                if( parsed )
                 {
-                    Console.Write( $"How many items do you want to remove (Max:{product.Quantity}): " );
-                    bool parsed = int.TryParse( Console.ReadLine(), out int remove );
-                    if( parsed )
+                    product.Quantity -= remove;
+                    if( product.Quantity <= 0 )
                     {
-                        product.Quantity -= remove;
-                        if( product.Quantity <= 0 )
-                        {
-                            products.Remove( product );
-                        }
-                        Console.WriteLine( "Items removed" );
-                        Console.ReadKey();
-                        return;
+                        cart.Remove( product );
                     }
+                    Console.WriteLine( "Items removed" );
+                    Console.ReadKey();
+                    return;
                 }
             }
         }
-        else if( command == "2" )
+        if (command == "2" && product.LinkedItem != null)
         {
+            int quantity;
+            while (true)
+            {
+                Console.WriteLine($"Enter quantity (Max: {product.LinkedItem.Quantity}): ");
+                bool success = int.TryParse(Console.ReadLine(), out quantity);
+                if( success && quantity <= product.LinkedItem.Quantity && quantity >= 1 )
+                    break;
+            }
+            
+            User.AddToCart(cart, product.LinkedItem, quantity);
             return;
         }
     }

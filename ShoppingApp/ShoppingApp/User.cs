@@ -24,9 +24,36 @@ public class User
 
 	public Product? CartContains(Product product)
 	{
-		foreach (var cartProduct in Cart)
+		return CartContains(Cart, product);
+	}
+	
+	// Static function for checking if a cart contains a product
+	public static Product? CartContains(List<Product> cart, Product product)
+	{
+		foreach (var cartProduct in cart)
 			if (cartProduct.Name == product.Name)
 				return cartProduct;
 		return null;
+	}
+	
+	public void AddToCart(Product product, int quantity)
+	{
+		AddToCart(Cart, product, quantity);
+	}
+
+	// Static function for adding products to a specific cart instead of a user
+	public static void AddToCart(List<Product> cart, Product product, int quantity)
+	{
+		Product? cartProduct = CartContains(cart, product);
+		if (cartProduct != null)
+		{
+			cartProduct.Quantity += quantity;
+		}
+		else
+		{
+			Product newProduct = new Product(product);
+			newProduct.Quantity = quantity;
+			cart.Add(newProduct);
+		}
 	}
 }

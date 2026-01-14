@@ -30,6 +30,7 @@ public class Product
         Price = product.Price;
         Quantity = product.Quantity;
         Categories = product.Categories;
+        LinkedItem = product.LinkedItem;
     }
 
     public int Id;
