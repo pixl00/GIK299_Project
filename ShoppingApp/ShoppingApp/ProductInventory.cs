@@ -5,9 +5,9 @@ public class ProductInventory
     public List<Product> Products = new();
     private uint CurrentProductId; // The id that the next added product is gonna get
     
-    public void CreateProduct( string name, float price, uint availableStock, ProductCategory category)
+    public void CreateProduct( string name, float price, uint availableStock, List<ProductCategory> categories)
     {
-        Products.Add(new Product(CurrentProductId, name, price, availableStock, category));
+        Products.Add(new Product(CurrentProductId, name, price, availableStock, categories));
         CurrentProductId++;
     }
 
