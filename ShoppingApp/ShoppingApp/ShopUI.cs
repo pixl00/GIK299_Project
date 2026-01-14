@@ -62,7 +62,7 @@ public class ShopUI
                 DisplaySearchProducts(inventory.Products);
                 break;
             case "3":
-                DisplayCart();
+                DisplayCartProducts(currentUser!.Cart);
                 break;
             case "4":
                 // View account info for authenticated users
@@ -148,21 +148,6 @@ public class ShopUI
         Console.WriteLine($"\nUser: {currentUser.Username}");
         Console.WriteLine($"Address: {currentUser.DeliveryAddress}");
         Console.WriteLine("Press any key...");
-        Console.ReadKey();
-    }
-
-    private static void DisplayCart()
-    {
-        Console.Clear();
-        if (currentUser == null)
-        {
-            Console.WriteLine("You have to log in to view your cart");
-            Console.ReadLine();
-            return;
-        }
-
-        Console.WriteLine($"{currentUser.Username}'s cart");
-        DisplayCartProducts(currentUser.Cart);
         Console.ReadKey();
     }
 
@@ -416,7 +401,16 @@ public class ShopUI
     public static void DisplayCartProducts(List<Product> cart)
     {
         Console.Clear();
+        if (currentUser == null)
+        {
+            Console.WriteLine("You have to log in to view your cart");
+            Console.ReadLine();
+            return;
+        }
+
+        Console.Clear();
         Console.WriteLine("[0] Return to main menu");
+        Console.WriteLine($"{currentUser.Username}'s cart");
         Console.WriteLine("--------------------------------------------------------");
 
         for (int i = 0; i < cart.Count; i++)
