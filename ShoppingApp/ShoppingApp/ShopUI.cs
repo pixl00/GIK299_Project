@@ -28,10 +28,22 @@ public class ShopUI
         }
         else
         {
-            Console.WriteLine();
-            Console.WriteLine("---[ACCOUNT]---");
-            Console.WriteLine("[4] View My Info");
-            Console.WriteLine("[5] Update My Info");
+            // Admin-only product management option
+            if (currentUser.IsAdmin())
+            {
+                Console.WriteLine("[4] Manage Products");
+            }
+
+            Console.WriteLine("\n---[ACCOUNT]---");
+            if (currentUser.IsAdmin())
+            {
+                Console.WriteLine("[5] View My Info");
+            }
+            else
+            {
+                Console.WriteLine("[4] View My Info");
+                Console.WriteLine("[5] Update My Info");
+            }
 
             // Admin-only options
             if (currentUser.IsAdmin())
@@ -62,16 +74,39 @@ public class ShopUI
                 DisplaySearchProducts(inventory.Products);
                 break;
             case "3":
-                DisplayCartProducts(currentUser!.Cart, inventory);
+                if (currentUser != null)
+                {
+                    DisplayCartProducts(currentUser.Cart, inventory);
+                }
+                else
+                {
+                    Console.WriteLine("You must be logged in to view your cart.");
+                    Console.ReadKey();
+                }
                 break;
             case "4":
-                // View account info for authenticated users
-                ViewMyInfo();
+                // Admin: Manage products OR Non-admin: View My Info
+                if (currentUser != null && currentUser.IsAdmin())
+                {
+                    Console.WriteLine("Manage Products - Feature coming soon");
+                    Console.ReadKey();
+                }
+                else if (currentUser != null)
+                {
+                    ViewMyInfo();
+                }
                 break;
             case "5":
-                // Update authenticated user's own information
-                loginSystem.UpdateUserInfo(currentUser);
-                Console.ReadKey();
+                // Admin: View My Info OR Non-admin: Update My Info
+                if (currentUser != null && currentUser.IsAdmin())
+                {
+                    ViewMyInfo();
+                }
+                else if (currentUser != null)
+                {
+                    loginSystem.UpdateUserInfo(currentUser);
+                    Console.ReadKey();
+                }
                 break;
             case "6":
                 // Admin: Update any user's information
@@ -83,14 +118,20 @@ public class ShopUI
                 break;
             case "7":
                 // Admin: Create a new user account
-                userManager.CreateUser(currentUser);
-                Console.ReadKey();
+                if (currentUser != null && currentUser.IsAdmin())
+                {
+                    userManager.CreateUser(currentUser);
+                    Console.ReadKey();
+                }
                 break;
             case "8":
                 // Admin: Delete an existing user account
-                Console.Clear();
-                userManager.DeleteUser(currentUser);
-                Console.ReadKey();
+                if (currentUser != null && currentUser.IsAdmin())
+                {
+                    Console.Clear();
+                    userManager.DeleteUser(currentUser);
+                    Console.ReadKey();
+                }
                 break;
             case "9":
                 // Admin: View all registered users
@@ -106,7 +147,7 @@ public class ShopUI
                 }
                 break;
             case "10":
-                // Handle login/logout based on current authentication state
+                // Handle login/logout
                 if (currentUser == null)
                 {
                     HandleLogin(loginSystem);
@@ -387,10 +428,10 @@ public class ShopUI
         Console.WriteLine();
         Console.WriteLine($"Quantity: {product.Quantity}");
 
-        // Show total price
+        // Show total item price
         float itemPrice = product.HasReducedPrice ? product.ReducedPrice : product.Price;
         float itemTotalPrice = itemPrice * product.Quantity;
-        Console.WriteLine($"Total Price: ${FormatPrice(itemTotalPrice)}");
+        Console.WriteLine($"Total item price: ${FormatPrice(itemTotalPrice)}");
 
         if (product.LinkedItem != null)
         {
@@ -409,8 +450,6 @@ public class ShopUI
         }
 
         Console.Clear();
-        Console.WriteLine("[0] Return to main menu");
-        Console.WriteLine("[1] Buy cart");
         Console.WriteLine($"{currentUser.Username}'s cart");
         Console.WriteLine("--------------------------------------------------------");
 
@@ -445,7 +484,9 @@ public class ShopUI
         }
         Console.WriteLine($"\nTotal price: ${FormatPrice(totalPrice)}");
         Console.WriteLine("--------------------------------------------------------");
-        Console.WriteLine();
+        Console.WriteLine("\n[0] Return to main menu");
+        Console.WriteLine("[1] Buy cart");
+        Console.Write("\nSelect an option: ");
 
         string? command = Console.ReadLine();
         if (command == "0") // return to main menu
