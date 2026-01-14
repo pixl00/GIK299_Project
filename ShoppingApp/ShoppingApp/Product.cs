@@ -59,7 +59,7 @@ public class Product
     public void SetReducedPrice(float percentage)
     {
         ReducedPercent = percentage;
-        ReducedPrice = Price * (percentage * 0.01f);
+        ReducedPrice = Price * (1 - percentage * 0.01f);
         HasReducedPrice = percentage < 100f;
     }
 }

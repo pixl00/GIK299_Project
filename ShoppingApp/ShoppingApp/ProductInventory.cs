@@ -117,4 +117,21 @@ public class ProductInventory
         }
         return null;
     }
+
+    // Check if a product with the given name already exists to avoid duplicates
+    public bool ProductNameExists(string name, int? excludeId = null)
+    {
+        foreach (var product in Products)
+        {
+            // string comparison using ordinal ignore case for case insensitive comparison to detect duplicates
+            if (product.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+            {
+                // In case we want to update a product but still input the same name, we exclude that product from the check by its id avoiding false positives
+                if (excludeId != null && product.Id == excludeId)
+                    continue;
+                return true;
+            }
+        }
+        return false;
+    }
 }

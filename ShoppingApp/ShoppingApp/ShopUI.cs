@@ -88,8 +88,7 @@ public class ShopUI
                 // Admin: Manage products OR Non-admin: View My Info
                 if (currentUser != null && currentUser.IsAdmin())
                 {
-                    Console.WriteLine("Manage Products - Feature coming soon");
-                    Console.ReadKey();
+                    ProductManager.ManageProducts(inventory);
                 }
                 else if (currentUser != null)
                 {
@@ -221,7 +220,7 @@ public class ShopUI
         Console.WriteLine($"in stock: {product.Quantity}");
     }
 
-    // Displays a paginated list of all products with the ability to view individual product details
+    // Displays a list of all products with the ability to view individual product details
     public static void DisplayAllProducts(List<Product> products)
     {
         Console.Clear();
@@ -238,8 +237,8 @@ public class ShopUI
         if (command == "0")
             return;
 
-        int.TryParse(command, out int index);
-        if (index > products.Count)
+        // Check if parse was successful AND index is within valid range (1 to count)
+        if (!int.TryParse(command, out int index) || index < 1 || index > products.Count)
             return;
 
         // Display selected product details
@@ -255,7 +254,6 @@ public class ShopUI
         }
         if (command == "1")
         {
-            // TODO: Implement add to cart functionality
             if (currentUser == null)
             {
                 Console.WriteLine("You have to log in to add items to your cart");
@@ -371,9 +369,10 @@ public class ShopUI
         if (command == "0")
             return;
 
-        int.TryParse(command, out int index);
-        if (index < 1 || index > searchedProducts.Count)
+        // Check if parse was successful AND index is within valid range (already checked above but clarifying)
+        if (!int.TryParse(command, out int index) || index < 1 || index > searchedProducts.Count)
             return;
+        
         Product product = searchedProducts[index - 1];
         // Allow user to add selected product to cart
         while (true)
