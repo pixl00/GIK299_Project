@@ -62,7 +62,7 @@ public class ShopUI
                 DisplaySearchProducts(inventory.Products);
                 break;
             case "3":
-                DisplayCartProducts(currentUser!.Cart);
+                DisplayCartProducts(currentUser!.Cart, inventory);
                 break;
             case "4":
                 // View account info for authenticated users
@@ -398,7 +398,7 @@ public class ShopUI
         }
     }
 
-    public static void DisplayCartProducts(List<Product> cart)
+    public static void DisplayCartProducts(List<Product> cart, ProductInventory inventory)
     {
         Console.Clear();
         if (currentUser == null)
@@ -410,12 +410,13 @@ public class ShopUI
 
         Console.Clear();
         Console.WriteLine("[0] Return to main menu");
+        Console.WriteLine("[1] Buy cart");
         Console.WriteLine($"{currentUser.Username}'s cart");
         Console.WriteLine("--------------------------------------------------------");
 
         for (int i = 0; i < cart.Count; i++)
         {
-            Console.Write($"[{i + 1}] ");
+            Console.Write($"[{i + 2}] ");
             DisplayCartProduct(cart[i]);
             Console.WriteLine("--------------------------------------------------------");
         }
@@ -447,13 +448,26 @@ public class ShopUI
         Console.WriteLine();
 
         string? command = Console.ReadLine();
-        if (command == "0")
+        if (command == "0") // return to main menu
             return;
+
+        if (command == "1") // buy the cart
+        {
+            foreach (var item in cart)
+            {
+                Product inventoryProduct = inventory.Products.Find(x => x.Name == item.Name)!;
+                inventoryProduct.Quantity -= item.Quantity;
+            }
+            cart.Clear();
+            Console.WriteLine("Purchased cart successfully");
+            Console.ReadKey();
+            return;
+        }
 
         if (!int.TryParse(command, out int index) || index <= 0 || index > cart.Count)
             return;
 
-        Product product = cart[index - 1];
+        Product product = cart[index - 2];
         Console.WriteLine("[0] Return to main menu");
         Console.WriteLine("[1] Remove from cart");
         if (product.LinkedItem != null)
