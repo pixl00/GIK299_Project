@@ -11,9 +11,10 @@ public class UserManager
 	}
 
 	// Creates a new user account (admin-only)
-	public void CreateUser(User adminUser)
+	public void CreateUser(User? adminUser)
 	{
-		if (!adminUser.IsAdmin()) return;
+		if (adminUser == null || !adminUser.IsAdmin()) 
+			return;
 
 		Console.WriteLine("\n--- Create New User ---");
 		
@@ -81,9 +82,10 @@ public class UserManager
 	}
 
 	// Deletes a user account (admin-only)
-	public void DeleteUser(User adminUser)
+	public void DeleteUser(User? adminUser)
 	{
-		if (!adminUser.IsAdmin()) return;
+		if (adminUser == null || !adminUser.IsAdmin()) 
+			return;
 
 		Console.Write("\nEnter username to delete: ");
 		string username = Console.ReadLine();

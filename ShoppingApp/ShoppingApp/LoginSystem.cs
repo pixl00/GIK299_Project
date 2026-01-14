@@ -48,8 +48,11 @@ public class LoginSystem
 	}
 
 	// Allows users to update their account information (admins can update any user)
-	public void UpdateUserInfo(User currentUser)
+	public void UpdateUserInfo(User? currentUser)
 	{
+		if(currentUser == null)
+			return;
+		
 		Console.Clear();
         User userToUpdate;
 

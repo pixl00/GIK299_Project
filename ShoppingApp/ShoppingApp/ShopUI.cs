@@ -2,7 +2,7 @@
 
 public class ShopUI
 {
-    private static User currentUser = null;
+    private static User? currentUser;
 
     public static void DisplayMainMenu(ProductInventory inventory, LoginSystem loginSystem, UserManager userManager, UserRepository repository)
     {
@@ -59,51 +59,40 @@ public class ShopUI
                 DisplayAllProducts(inventory);
                 break;
             case "2":
-                SearchProducts(inventory);
+                DisplaySearchProducts(inventory);
                 break;
             case "3":
                 DisplayCart();
                 break;
             case "4":
                 // View account info for authenticated users
-                if (currentUser != null)
-                {
                     ViewMyInfo();
-                }
                 break;
             case "5":
                 // Update authenticated user's own information
-                if (currentUser != null)
-                {
-                    loginSystem.UpdateUserInfo(currentUser);
-                    Console.ReadKey();
-                }
+                loginSystem.UpdateUserInfo(currentUser);
+                Console.ReadKey();
                 break;
             case "6":
                 // Admin: Update any user's information
-                if (currentUser != null && currentUser.IsAdmin())
+                if (currentUser.IsAdmin())
                 {
+                    // todo borde inte vara currentUser här \/
                     loginSystem.UpdateUserInfo(currentUser);
                     Console.ReadKey();
                 }
                 break;
             case "7":
                 // Admin: Create a new user account
-                if (currentUser != null && currentUser.IsAdmin())
-                {
                     Console.Clear();
                     userManager.CreateUser(currentUser);
                     Console.ReadKey();
-                }
                 break;
             case "8":
                 // Admin: Delete an existing user account
-                if (currentUser != null && currentUser.IsAdmin())
-                {
                     Console.Clear();
                     userManager.DeleteUser(currentUser);
                     Console.ReadKey();
-                }
                 break;
             case "9":
                 // Admin: View all registered users
@@ -154,24 +143,14 @@ public class ShopUI
     // Displays the currently logged-in user's account information
     private static void ViewMyInfo()
     {
+        if(currentUser == null)
+            return;
+        
         Console.Clear();
         Console.WriteLine($"\nUser: {currentUser.Username}");
         Console.WriteLine($"Address: {currentUser.DeliveryAddress}");
         Console.WriteLine("Press any key...");
         Console.ReadKey();
-    }
-
-    // Prompts the user to enter a search term and displays matching products
-    private static void SearchProducts(ProductInventory inventory)
-    {
-        string? command = null;
-        while (command == null || command == "")
-        {
-            Console.Clear();
-            Console.Write("Enter a search term : ");
-            command = Console.ReadLine();
-            DisplaySearchedProducts(inventory, command);
-        }
     }
 
     private static void DisplayCart()
@@ -249,9 +228,17 @@ public class ShopUI
     }
     
     // Searches products by name or category and displays matching results
-    public static void DisplaySearchedProducts(ProductInventory inventory, string search)
+    public static void DisplaySearchProducts(ProductInventory inventory)
     {
         Console.Clear();
+        string? search = null;
+        while (string.IsNullOrWhiteSpace(search))
+        {
+            Console.Clear();
+            Console.Write("Enter a search term : ");
+            search = Console.ReadLine();
+        }
+        
         Console.WriteLine("Choose a product");
         Console.WriteLine("--------------------------------------------------------");
         List<Product> products = new();
