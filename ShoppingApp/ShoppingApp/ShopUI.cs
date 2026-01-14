@@ -235,7 +235,7 @@ public class ShopUI
             Console.WriteLine("--------------------------------------------------------");
         }
         string? command = Console.ReadLine();
-        if (command == "0")
+        if (command == "0" || string.IsNullOrWhiteSpace(command))
             return;
 
         int.TryParse(command, out int index);
