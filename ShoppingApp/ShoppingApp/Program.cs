@@ -6,13 +6,8 @@ class Program
     
     static void Main(string[] args)
     {
-        // Initialize product inventory with sample products
+        // Initialize product inventory 
         ProductInventory inventory = new ProductInventory();
-        inventory.CreateProduct("Gaming mouse", 59.99f, 10, ProductCategory.GAMING);
-        inventory.CreateProduct("Ergonomic mouse", 89.99f, 15, ProductCategory.OFFICE);
-        
-        // Apply 50% discount to first product
-        inventory.Products[0].SetReducedPrice(50f);
         
         // Initialize user repository and system components
         UserRepository repository = new UserRepository();

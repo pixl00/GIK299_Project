@@ -5,7 +5,56 @@ public class ProductInventory
     public List<Product> Products = new();
     private uint CurrentProductId; // The id that the next added product is gonna get
     
-    public void CreateProduct( string name, float price, uint availableStock, ProductCategory category)
+    public ProductInventory()
+    {
+        InitializeProducts();
+    }
+
+    private void InitializeProducts()
+    {
+        // Gaming products
+        CreateProduct("Gaming mouse", 59.99f, 10, ProductCategory.GAMING);
+        CreateProduct("Mechanical keyboard RGB", 149.99f, 8, ProductCategory.GAMING);
+        CreateProduct("Gaming headset 7.1", 119.99f, 12, ProductCategory.GAMING);
+        CreateProduct("Gaming monitor 240Hz", 399.99f, 5, ProductCategory.GAMING);
+       
+        
+        // Audio products
+        CreateProduct("Wireless headphones", 79.99f, 25, ProductCategory.AUDIO);
+        CreateProduct("Bluetooth speaker", 39.99f, 30, ProductCategory.AUDIO);
+        CreateProduct("Studio microphone", 89.99f, 14, ProductCategory.AUDIO);
+        
+        // Storage products
+        CreateProduct("SSD 1TB NVMe", 99.99f, 16, ProductCategory.STORAGE);
+        CreateProduct("External HDD 2TB", 79.99f, 12, ProductCategory.STORAGE);
+        CreateProduct("USB flash drive 64GB", 24.99f, 45, ProductCategory.STORAGE);
+        
+        // Accessories products
+        CreateProduct("USB-C cable 6ft", 12.99f, 50, ProductCategory.ACCESSORIES);
+        CreateProduct("HDMI cable 10ft", 14.99f, 40, ProductCategory.ACCESSORIES);
+        CreateProduct("Cable organizer kit", 19.99f, 35, ProductCategory.ACCESSORIES);
+        CreateProduct("Mouse pad large", 24.99f, 50, ProductCategory.ACCESSORIES);
+        CreateProduct("Keyboard wrist rest", 29.99f, 22, ProductCategory.ACCESSORIES);
+        
+        // Apply discounts to selected products
+        Products[0].SetReducedPrice(50f);
+        Products[2].SetReducedPrice(25f);
+        Products[5].SetReducedPrice(35f);
+        Products[9].SetReducedPrice(15f);
+        Products[11].SetReducedPrice(40f);
+
+        // Link items to their recommended products
+        Products[0].LinkedItem = Products[13]; // Gaming mouse -> Mouse pad
+        Products[1].LinkedItem = Products[14]; // Mechanical keyboard -> Keyboard wrist rest
+        Products[2].LinkedItem = Products[10]; // Gaming headset -> USB-C cable
+        Products[3].LinkedItem = Products[11]; // Gaming monitor -> HDMI cable
+        Products[4].LinkedItem = Products[10]; // Wireless headphones -> USB-C cable
+        Products[6].LinkedItem = Products[10]; // Studio microphone -> USB-C cable
+        Products[7].LinkedItem = Products[10]; // SSD -> USB-C cable
+        Products[8].LinkedItem = Products[10]; // External HDD -> USB-C cable
+    }
+    
+    public void CreateProduct(string name, float price, uint availableStock, ProductCategory category)
     {
         Products.Add(new Product(CurrentProductId, name, price, availableStock, category));
         CurrentProductId++;
@@ -55,6 +104,16 @@ public class ProductInventory
         {
             if (product.Name == name)
                 return product;
+        }
+        return null;
+    }
+
+    // Returns the linked item for a product if it's in stock
+    public Product? GetRecommendedProduct(Product product)
+    {
+        if (product.LinkedItem != null && product.LinkedItem.Quantity > 0)
+        {
+            return product.LinkedItem;
         }
         return null;
     }

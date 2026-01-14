@@ -4,8 +4,10 @@
 public enum ProductCategory
 {
     NONE,
-    OFFICE,
-    GAMING
+    GAMING,
+    AUDIO,
+    STORAGE,
+    ACCESSORIES
 }
 
 // Represents a product in the inventory with pricing and discount functionality
@@ -25,6 +27,7 @@ public class Product
     public float Price;
     public int Quantity;
     public List<ProductCategory> Categories = new();
+    public Product? LinkedItem; // Recommended product to pair with this item
     
     // Sale pricing
     public bool HasReducedPrice = false;
