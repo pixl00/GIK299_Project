@@ -31,6 +31,9 @@ public class Product
         Quantity = product.Quantity;
         Categories = product.Categories;
         LinkedItem = product.LinkedItem;
+        HasReducedPrice = product.HasReducedPrice;
+        ReducedPercent = product.ReducedPercent;
+        ReducedPrice = product.ReducedPrice;
     }
 
     public int Id;

@@ -8,13 +8,13 @@ public class ShopUI
     {
         Console.Clear();
         Console.WriteLine("--TEMU--");
-        
+
         if (currentUser != null)
         {
             Console.WriteLine($"Logged in as: {currentUser.Username}");
             Console.WriteLine("-----------------------------");
         }
-        
+
         // Core shopping options available to all users
         Console.WriteLine("[1] View all products");
         Console.WriteLine("[2] Search products");
@@ -52,7 +52,7 @@ public class ShopUI
 
         Console.Write("Select an option: ");
         string? command = Console.ReadLine();
-        
+
         switch (command)
         {
             case "1":
@@ -83,14 +83,14 @@ public class ShopUI
                 break;
             case "7":
                 // Admin: Create a new user account
-                    userManager.CreateUser(currentUser);
-                    Console.ReadKey();
+                userManager.CreateUser(currentUser);
+                Console.ReadKey();
                 break;
             case "8":
                 // Admin: Delete an existing user account
-                    Console.Clear();
-                    userManager.DeleteUser(currentUser);
-                    Console.ReadKey();
+                Console.Clear();
+                userManager.DeleteUser(currentUser);
+                Console.ReadKey();
                 break;
             case "9":
                 // Admin: View all registered users
@@ -141,9 +141,9 @@ public class ShopUI
     // Displays the currently logged-in user's account information
     private static void ViewMyInfo()
     {
-        if(currentUser == null)
+        if (currentUser == null)
             return;
-        
+
         Console.Clear();
         Console.WriteLine($"\nUser: {currentUser.Username}");
         Console.WriteLine($"Address: {currentUser.DeliveryAddress}");
@@ -160,9 +160,9 @@ public class ShopUI
             Console.ReadLine();
             return;
         }
-        
+
         Console.WriteLine($"{currentUser.Username}'s cart");
-        DisplayCartProducts( currentUser.Cart );
+        DisplayCartProducts(currentUser.Cart);
         Console.ReadKey();
     }
 
@@ -194,31 +194,31 @@ public class ShopUI
         Console.WriteLine();
         Console.WriteLine($"in stock: {product.Quantity}");
     }
-    
+
     // Displays a paginated list of all products with the ability to view individual product details
     public static void DisplayAllProducts(List<Product> products)
     {
         Console.Clear();
         Console.WriteLine("[0] Return to main menu");
         Console.WriteLine("--------------------------------------------------------");
-        
+
         for (int i = 0; i < products.Count; i++)
         {
-            Console.Write($"[{i+1}] ");
+            Console.Write($"[{i + 1}] ");
             DisplayProduct(products[i]);
             Console.WriteLine("--------------------------------------------------------");
         }
         string? command = Console.ReadLine();
         if (command == "0")
             return;
-        
+
         int.TryParse(command, out int index);
         if (index > products.Count)
             return;
 
         // Display selected product details
         Console.Clear();
-        Product product = products[index-1];
+        Product product = products[index - 1];
         DisplayProduct(product);
         Console.WriteLine("[0] Return to main menu");
         Console.WriteLine("[1] Add to cart");
@@ -249,14 +249,44 @@ public class ShopUI
             {
                 Console.WriteLine($"Enter quantity (Max: {product.Quantity}): ");
                 bool success = int.TryParse(Console.ReadLine(), out quantity);
-                if( success && quantity <= product.Quantity && quantity >= 1 )
+                if (success && quantity <= product.Quantity && quantity >= 1)
                     break;
             }
-            
+
             currentUser.AddToCart(product, quantity);
+            Console.WriteLine("Item added to cart!");
+
+            // Prompt to add linked item if available and in stock
+            if (product.LinkedItem != null && product.LinkedItem.Quantity > 0)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"Would you like to add the recommended item '{product.LinkedItem.Name}' to your cart?");
+                Console.WriteLine("[1] Yes");
+                Console.WriteLine("[0] No");
+                Console.Write("\nSelect an option: ");
+                string? linkedItemCommand = Console.ReadLine();
+
+                if (linkedItemCommand == "1")
+                {
+                    int linkedQuantity;
+                    while (true)
+                    {
+                        Console.WriteLine($"Enter quantity for {product.LinkedItem.Name} (Max: {product.LinkedItem.Quantity}): ");
+                        bool success = int.TryParse(Console.ReadLine(), out linkedQuantity);
+                        if (success && linkedQuantity <= product.LinkedItem.Quantity && linkedQuantity >= 1)
+                            break;
+                    }
+
+                    currentUser.AddToCart(product.LinkedItem, linkedQuantity);
+                    Console.WriteLine("\nRecommended item added to cart!");
+                }
+            }
+
+            Console.ReadKey();
+            return;
         }
     }
-    
+
     // Searches products by name or category and displays matching results
     public static void DisplaySearchProducts(List<Product> products)
     {
@@ -269,11 +299,11 @@ public class ShopUI
             Console.Write("Enter a search term : ");
             search = Console.ReadLine();
         }
-        
+
         Console.WriteLine("Choose a product");
         Console.WriteLine("--------------------------------------------------------");
         List<Product> searchedProducts = new();
-  
+
         // Filter products matching search term in name or category
         for (int i = 0; i < products.Count; i++)
         {
@@ -288,10 +318,10 @@ public class ShopUI
                         break;
                     }
                 }
-                if(!categoryContains)
+                if (!categoryContains)
                     continue;
             }
-            
+
             searchedProducts.Add(products[i]);
         }
 
@@ -303,22 +333,22 @@ public class ShopUI
             Console.ReadLine();
             return;
         }
-        
+
         // Display search results
         for (int i = 0; i < searchedProducts.Count; i++)
         {
-            Console.Write($"[{i+1}]");
+            Console.Write($"[{i + 1}]");
             DisplayProduct(searchedProducts[i]);
             Console.WriteLine("--------------------------------------------------------");
         }
         string? command = Console.ReadLine();
         if (command == "0")
             return;
-        
+
         int.TryParse(command, out int index);
         if (index < 1 || index > searchedProducts.Count)
             return;
-        Product product = searchedProducts[index-1];
+        Product product = searchedProducts[index - 1];
         // Allow user to add selected product to cart
         while (true)
         {
@@ -339,100 +369,128 @@ public class ShopUI
                     Console.ReadKey();
                     return;
                 }
-                
+
                 int quantity;
                 while (true)
                 {
                     Console.WriteLine($"Enter quantity (Max: {product.Quantity}): ");
                     bool success = int.TryParse(Console.ReadLine(), out quantity);
-                    if( success && quantity <= product.Quantity && quantity >= 1 )
+                    if (success && quantity <= product.Quantity && quantity >= 1)
                         break;
                 }
-            
+
                 currentUser.AddToCart(product, quantity);
                 return;
             }
         }
     }
 
-    public static void DisplayCartProduct( Product product )
+    public static void DisplayCartProduct(Product product)
     {
-        Console.WriteLine( product.Name );
-        if( product.HasReducedPrice )
+        Console.WriteLine(product.Name);
+        if (product.HasReducedPrice)
         {
             Console.WriteLine();
-            Console.WriteLine( $"Original price: ${FormatPrice( product.Price )}" );
-            Console.WriteLine( $"Current price: ${FormatPrice( product.ReducedPrice )} ({product.ReducedPercent}% off!)" );
+            Console.WriteLine($"Original price: ${FormatPrice(product.Price)}");
+            Console.WriteLine($"Current price: ${FormatPrice(product.ReducedPrice)} ({product.ReducedPercent}% off!)");
         }
         else
         {
             Console.WriteLine();
-            Console.WriteLine( $"Current price: ${FormatPrice( product.Price )}" );
+            Console.WriteLine($"Current price: ${FormatPrice(product.Price)}");
         }
         Console.WriteLine();
-        Console.WriteLine( $"Quantity: {product.Quantity}" );
-        
+        Console.WriteLine($"Quantity: {product.Quantity}");
+
+        // Show total price
+        float itemPrice = product.HasReducedPrice ? product.ReducedPrice : product.Price;
+        float itemTotalPrice = itemPrice * product.Quantity;
+        Console.WriteLine($"Total Price: ${FormatPrice(itemTotalPrice)}");
+
         if (product.LinkedItem != null)
         {
             Console.WriteLine($"Related product: {product.LinkedItem.Name}");
         }
     }
 
-    public static void DisplayCartProducts( List<Product> cart )
+    public static void DisplayCartProducts(List<Product> cart)
     {
         Console.Clear();
-        Console.WriteLine( "[0] Return to main menu" );
-        Console.WriteLine( "--------------------------------------------------------" );
+        Console.WriteLine("[0] Return to main menu");
+        Console.WriteLine("--------------------------------------------------------");
 
-        for( int i = 0; i < cart.Count; i++ )
+        for (int i = 0; i < cart.Count; i++)
         {
-            Console.Write( $"[{i + 1}] " );
-            DisplayCartProduct( cart[i] );
-            Console.WriteLine( "--------------------------------------------------------" );
+            Console.Write($"[{i + 1}] ");
+            DisplayCartProduct(cart[i]);
+            Console.WriteLine("--------------------------------------------------------");
         }
-        string? command = Console.ReadLine();
-        if( command == "0" )
-            return;
 
-        int.TryParse( command, out int index );
-        if( index > cart.Count )
-            return;
+        // Calculate and display cart totals
+        float totalPrice = 0;
+        float totalDiscount = 0;
 
-        // Display selected product details
-        Console.Clear();
-        Product product = cart[index - 1];
-        DisplayCartProduct( product );
-        Console.WriteLine( "[0] Return to main menu" );
-        Console.WriteLine( "[1] Remove from cart" );
-        if(product.LinkedItem != null)
-            Console.WriteLine( "[2] Add recommended product to cart" );
-        command = Console.ReadLine();
-        if( command == "" )
+        foreach (var item in cart)
         {
-            return;
-        }
-        if( command == "1" )
-        {
-            if( product.Quantity == 1 )
+            float itemPrice = item.HasReducedPrice ? item.ReducedPrice : item.Price;
+            totalPrice += itemPrice * item.Quantity;
+
+            if (item.HasReducedPrice)
             {
-                cart.Remove( product );
-                Console.WriteLine( "Item removed" );
+                float discountPerItem = item.Price - item.ReducedPrice;
+                totalDiscount += discountPerItem * item.Quantity;
+            }
+        }
+
+        Console.WriteLine();
+        Console.WriteLine($"Total items: {cart.Count}");
+        if (totalDiscount > 0)
+        {
+            Console.WriteLine($"Total discount savings: ${FormatPrice(totalDiscount)}");
+        }
+        Console.WriteLine($"\nTotal price: ${FormatPrice(totalPrice)}");
+        Console.WriteLine("--------------------------------------------------------");
+        Console.WriteLine();
+
+        string? command = Console.ReadLine();
+        if (command == "0")
+            return;
+
+        if (!int.TryParse(command, out int index) || index <= 0 || index > cart.Count)
+            return;
+
+        Product product = cart[index - 1];
+        Console.WriteLine("[0] Return to main menu");
+        Console.WriteLine("[1] Remove from cart");
+        if (product.LinkedItem != null)
+            Console.WriteLine("[2] Add recommended product to cart");
+        command = Console.ReadLine();
+        if (command == "")
+        {
+            return;
+        }
+        if (command == "1")
+        {
+            if (product.Quantity == 1)
+            {
+                cart.Remove(product);
+                Console.WriteLine("Item removed");
                 Console.ReadKey();
                 return;
             }
-            
-            while( true )
+
+            while (true)
             {
-                Console.Write( $"How many items do you want to remove (Max:{product.Quantity}): " );
-                bool parsed = int.TryParse( Console.ReadLine(), out int remove );
-                if( parsed )
+                Console.Write($"How many items do you want to remove (Max:{product.Quantity}): ");
+                bool parsed = int.TryParse(Console.ReadLine(), out int remove);
+                if (parsed)
                 {
                     product.Quantity -= remove;
-                    if( product.Quantity <= 0 )
+                    if (product.Quantity <= 0)
                     {
-                        cart.Remove( product );
+                        cart.Remove(product);
                     }
-                    Console.WriteLine( "Items removed" );
+                    Console.WriteLine("Items removed");
                     Console.ReadKey();
                     return;
                 }
@@ -445,10 +503,10 @@ public class ShopUI
             {
                 Console.WriteLine($"Enter quantity (Max: {product.LinkedItem.Quantity}): ");
                 bool success = int.TryParse(Console.ReadLine(), out quantity);
-                if( success && quantity <= product.LinkedItem.Quantity && quantity >= 1 )
+                if (success && quantity <= product.LinkedItem.Quantity && quantity >= 1)
                     break;
             }
-            
+
             User.AddToCart(cart, product.LinkedItem, quantity);
             return;
         }
