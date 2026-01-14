@@ -235,6 +235,7 @@ public class ShopUI
         while (string.IsNullOrWhiteSpace(search))
         {
             Console.Clear();
+            Console.WriteLine("Available categories: \nGAMING | AUDIO | STORAGE | ACCESSORIES\n--------------------------------------------------------\n  ");
             Console.Write("Enter a search term : ");
             search = Console.ReadLine();
         }
