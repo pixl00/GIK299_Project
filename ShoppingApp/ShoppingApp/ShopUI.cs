@@ -7,7 +7,7 @@ public class ShopUI
     public static void DisplayMainMenu(ProductInventory inventory, LoginSystem loginSystem, UserManager userManager, UserRepository repository)
     {
         Console.Clear();
-        Console.WriteLine("--TEMU--");
+        Console.WriteLine("--TEMO--");
 
         if (currentUser != null)
         {
@@ -233,6 +233,7 @@ public class ShopUI
             DisplayProduct(products[i]);
             Console.WriteLine("--------------------------------------------------------");
         }
+        Console.Write("\nSelect item: ");
         string? command = Console.ReadLine();
         if (command == "0" || string.IsNullOrWhiteSpace(command))
             return;
@@ -245,8 +246,9 @@ public class ShopUI
         Console.Clear();
         Product product = products[index - 1];
         DisplayProduct(product);
-        Console.WriteLine("[0] Return to main menu");
+        Console.WriteLine("\n[0] Return to main menu");
         Console.WriteLine("[1] Add to cart");
+        Console.Write("\nSelect an option: ");
         command = Console.ReadLine();
         if (command == "0")
         {
@@ -271,21 +273,21 @@ public class ShopUI
             int quantity;
             while (true)
             {
-                Console.WriteLine($"Enter quantity (Max: {product.Quantity}): ");
+                Console.Write($"Enter quantity (Max: {product.Quantity}): ");
                 bool success = int.TryParse(Console.ReadLine(), out quantity);
                 if (success && quantity <= product.Quantity && quantity >= 1)
                     break;
             }
 
             currentUser.AddToCart(product, quantity);
-            Console.WriteLine("Item added to cart!");
+            Console.WriteLine("\nItem added to cart!");
 
             // Prompt to add linked item if available and in stock
             if (product.LinkedItem != null && product.LinkedItem.Quantity > 0)
             {
                 Console.WriteLine();
                 Console.WriteLine($"Would you like to add the recommended item '{product.LinkedItem.Name}' to your cart?");
-                Console.WriteLine("[1] Yes");
+                Console.WriteLine("\n[1] Yes");
                 Console.WriteLine("[0] No");
                 Console.Write("\nSelect an option: ");
                 string? linkedItemCommand = Console.ReadLine();
@@ -295,10 +297,14 @@ public class ShopUI
                     int linkedQuantity;
                     while (true)
                     {
-                        Console.WriteLine($"Enter quantity for {product.LinkedItem.Name} (Max: {product.LinkedItem.Quantity}): ");
+                        Console.Write($"Enter quantity for {product.LinkedItem.Name} (Max: {product.LinkedItem.Quantity}): ");
                         bool success = int.TryParse(Console.ReadLine(), out linkedQuantity);
                         if (success && linkedQuantity <= product.LinkedItem.Quantity && linkedQuantity >= 1)
                             break;
+                        else
+                        {
+                            Console.WriteLine("\nInvalid quantity. Please try again.");
+                        }
                     }
 
                     currentUser.AddToCart(product.LinkedItem, linkedQuantity);
@@ -380,7 +386,8 @@ public class ShopUI
             Console.Clear();
             DisplayProduct(product);
             Console.WriteLine("[0] Return to main menu");
-            Console.WriteLine("[1] Add to cart");
+            Console.WriteLine("[1] Add to cart\n");
+            Console.Write("Select an option: ");
             command = Console.ReadLine();
             if (command == "0")
             {
@@ -398,7 +405,7 @@ public class ShopUI
                 int quantity;
                 while (true)
                 {
-                    Console.WriteLine($"Enter quantity (Max: {product.Quantity}): ");
+                    Console.Write($"Enter quantity (Max: {product.Quantity}): ");
                     bool success = int.TryParse(Console.ReadLine(), out quantity);
                     if (success && quantity <= product.Quantity && quantity >= 1)
                         break;

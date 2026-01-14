@@ -215,7 +215,7 @@ namespace ShoppingApp
             {
                 // Validate it's a valid category enum and not "None"
                 // ignoreCase: true allows "audio", "AUDIO", "Audio" to all match the Audio enum value
-                if (Enum.TryParse<ProductCategory>(newCategoryInput, ignoreCase: true, out ProductCategory newCategory) && 
+                if (Enum.TryParse<ProductCategory>(newCategoryInput, ignoreCase: true, out   ProductCategory newCategory) && 
                     newCategory != ProductCategory.None)
                 {
                     // Replace categories list with single new category to prevent multiple categories being assigned
