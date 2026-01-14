@@ -37,7 +37,7 @@ public class LoginSystem
                 while (string.IsNullOrWhiteSpace(command))
                 {
                     Console.Clear();
-                    Console.WriteLine("No user with that username found, would you like to make a new one? (y/n)");
+                    Console.Write("No user with that username found, would you like to make a new one? (y/n): ");
                     command = Console.ReadLine();
                     if (command != null && command.ToLower() != "y" && command.ToLower() != "n")
                         command = null;
@@ -50,7 +50,7 @@ public class LoginSystem
                 while (string.IsNullOrEmpty(password))
                 {
                     Console.Clear();
-                    Console.WriteLine("Enter a password: ");
+                    Console.Write("Enter a password: ");
                     password = Console.ReadLine();
                 }
                 
@@ -58,7 +58,7 @@ public class LoginSystem
                 while (string.IsNullOrEmpty(address))
                 {
                     Console.Clear();
-                    Console.WriteLine("Enter an address: ");
+                    Console.Write("Enter an address: ");
                     address = Console.ReadLine();
                 }
 
