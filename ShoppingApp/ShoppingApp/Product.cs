@@ -3,11 +3,11 @@
 // Product categories for organizing inventory
 public enum ProductCategory
 {
-    NONE,
-    GAMING,
-    AUDIO,
-    STORAGE,
-    ACCESSORIES
+    None,
+    Gaming,
+    Audio,
+    Storage,
+    Accessories
 }
 
 // Represents a product in the inventory with pricing and discount functionality
